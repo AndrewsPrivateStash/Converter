@@ -10,8 +10,8 @@ use std::env;
 fn get_args() -> Vec<String> {
     let args: Vec<String> = env::args().skip(1).collect();
 
-    // check arg count and privide usage
-    if args.len() < 3 {
+    // check arg count and provide usage
+    if args.len() != 3 {
         eprint!("Usage: convert <from_base:u8> <to_base:u8> <value:String>...\n");
         std::process::exit(1);
     }

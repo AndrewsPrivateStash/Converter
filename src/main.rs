@@ -28,9 +28,10 @@ fn char_map(i: u8) -> Option<char> {
 }
 
 fn map_char(c: char) -> Option<u8> {
-    match c.to_ascii_lowercase() {
-        '0'..='9' => Some((c as u8) - 48u8),
-        'a'..='z' => Some((c as u8) - 87u8),
+    let c_low: char = c.to_ascii_lowercase();
+    match c_low {
+        '0'..='9' => Some((c_low as u8) - 48u8),
+        'a'..='z' => Some((c_low as u8) - 87u8),
         _ => None,
     }
 }
@@ -174,6 +175,7 @@ mod tests {
             ('f', Some(15)),
             ('5', Some(5)),
             ('z', Some(35)),
+            ('Z', Some(35)),
         ];
 
         for v in vals {

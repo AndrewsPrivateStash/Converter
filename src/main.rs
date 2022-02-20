@@ -19,10 +19,10 @@ fn get_args() -> Vec<String> {
 }
 
 fn char_map(i: u8) -> Option<char> {
-    // assumes no base greater than 16
+    // assumes no base greater than 36
     match i {
         0..=9 => Some((i + 48) as char),
-        10..=15 => Some((i + 87) as char),
+        10..=35 => Some((i + 87) as char),
         _ => None,
     }
 }
@@ -30,7 +30,7 @@ fn char_map(i: u8) -> Option<char> {
 fn map_char(c: char) -> Option<u8> {
     match c.to_ascii_lowercase() {
         '0'..='9' => Some((c as u8) - 48u8),
-        'a'..='f' => Some((c as u8) - 87u8),
+        'a'..='z' => Some((c as u8) - 87u8),
         _ => None,
     }
 }
@@ -45,7 +45,7 @@ fn base_to_dec(in_val: &str, base: usize) -> usize {
     //handle leading 0x chars if present
     let in_str: String = match &in_val[0..2] {
         "0x" | "0b" | "0o" => in_val[2..].to_string(),
-        _ => in_val.to_string()
+        _ => in_val.to_string(),
     };
 
     let mut out_val: usize = 0;
@@ -107,8 +107,8 @@ fn main() {
     let args = get_args();
 
     let bases: (usize, usize) = (args[0].parse().unwrap(), args[1].parse().unwrap());
-    if bases.0 == 1 || bases.1 == 1 {
-        eprint!("bases must be greater than 1 and less than 17\n");
+    if bases.0 < 2 || bases.1 < 2 || bases.0 > 36 || bases.1 > 36 {
+        eprint!("bases must be greater than 1 and less than 37\n");
         std::process::exit(1);
     }
 
@@ -173,7 +173,7 @@ mod tests {
             ('0', Some(0)),
             ('f', Some(15)),
             ('5', Some(5)),
-            ('z', None),
+            ('z', Some(35)),
         ];
 
         for v in vals {
@@ -192,6 +192,8 @@ mod tests {
             ((8, 16), "100", "40"),
             ((16, 10), "0xffff", "65535"),
             ((10, 16), "-10", "-a"),
+            ((10, 30), "1000", "13a"),
+            ((30, 10), "13a", "1000"),
         ];
 
         for v in vals {

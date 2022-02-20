@@ -43,11 +43,11 @@ fn base_to_dec(in_val: &str, base: usize) -> usize {
     }
 
     //handle leading 0x chars if present
-    let mut in_str: String = in_val.to_string();
-    match &in_str[0..2] {
-        "0x" | "0b" | "0o" => in_str = in_str[2..].to_string(),
-        _ => (),
-    }
+    let in_str: String = match &in_val[0..2] {
+        "0x" | "0b" | "0o" => in_val[2..].to_string(),
+        _ => in_val.to_string()
+    };
+
     let mut out_val: usize = 0;
     for (i, c) in in_str.chars().rev().enumerate() {
         let char_val: usize = map_char(c).unwrap().try_into().unwrap();

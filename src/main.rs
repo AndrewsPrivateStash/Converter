@@ -52,7 +52,7 @@ fn char_map(i: u8) -> Option<char> {
     // assumes no base greater than 36
     match i {
         0..=9 => Some((i + 48) as char),
-        10..=35 => Some((i + 87) as char),
+        10..=36 => Some((i + 87) as char),
         _ => None,
     }
 }
@@ -231,5 +231,5 @@ mod tests {
 /*
     TODO:
     - better error handling
-
+    - check all valid chars
 */

@@ -9,13 +9,43 @@ use std::env;
 
 fn get_args() -> Vec<String> {
     let args: Vec<String> = env::args().skip(1).collect();
+    check_args(&args);
+    args
+}
 
+fn check_args(args: &Vec<String>) {
     // check arg count and provide usage
     if args.len() != 3 {
         eprint!("Usage: convert <from_base:u8> <to_base:u8> <value:String>...\n");
         std::process::exit(1);
     }
-    args
+
+    // ensure first two args are usize ints between 2 and 36
+    for s in &args[0..2] {
+        match s.parse::<usize>() {
+            Ok(v) => match v {
+                2..=36 => (),
+                _ => {
+                    eprintln!("{} is not a valid base; bases: 2-36 allowed", v);
+                    std::process::exit(1);
+                }
+            },
+            Err(e) => {
+                eprintln!("{} can not be parsed into a usize; invalid base\n{}", s, e);
+                std::process::exit(1);
+            }
+        }
+    }
+
+    //ensure third argument is valid first argument base.
+    //eg. if base1 = 11 then all chars <= 'a' etc
+    let max_char: char = char_map(args[0].parse::<u8>().unwrap()).unwrap();
+    for c in args[2].chars() {
+        if c >= max_char {
+            eprintln!("`{}` exceeds the exclusive max value `{}` of base {}", c, max_char, args[0]);
+            std::process::exit(1);
+        }
+    }
 }
 
 fn char_map(i: u8) -> Option<char> {
@@ -106,13 +136,7 @@ fn convert_value(bases: (usize, usize), val: &str) -> String {
 
 fn main() {
     let args = get_args();
-
     let bases: (usize, usize) = (args[0].parse().unwrap(), args[1].parse().unwrap());
-    if bases.0 < 2 || bases.1 < 2 || bases.0 > 36 || bases.1 > 36 {
-        eprint!("bases must be greater than 1 and less than 37\n");
-        std::process::exit(1);
-    }
-
     println!("{}", convert_value(bases, &args[2]));
 }
 
@@ -206,6 +230,6 @@ mod tests {
 
 /*
     TODO:
-    - add error handling
+    - better error handling
 
 */
